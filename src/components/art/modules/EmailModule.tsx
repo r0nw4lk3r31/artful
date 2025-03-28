@@ -38,7 +38,7 @@ const EmailModule = ({ frameId, isTargeted }: EmailModuleProps) => {
       id: '2',
       subject: 'Project Update',
       sender: 'Sarah Smith <sarah@example.com>',
-      preview: 'I've finished the first phase of the project and wanted to share...',
+      preview: "I've finished the first phase of the project and wanted to share...",
       date: 'Yesterday',
       read: true,
       folder: 'inbox'
