@@ -14,3 +14,19 @@ export type ModuleType =
   | 'news'
   | 'blockchain'
   | 'scanner';
+
+export interface Module {
+  id: string;
+  type: ModuleType;
+  title: string;
+  active?: boolean;
+}
+
+export interface ModuleState {
+  [frameId: string]: Module;
+}
+
+export interface CommandTarget {
+  targetFrame: string | null;
+  command: string;
+}

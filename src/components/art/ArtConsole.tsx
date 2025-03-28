@@ -3,21 +3,38 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Command, Divide, Globe, Layers, LayoutGrid, MailOpen, Maximize, Menu, MessageSquare, Search, Settings, Sun, Thermometer, Watch, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { LayoutMode } from '@/types/artTypes';
+import { LayoutMode, ModuleState, ModuleType } from '@/types/artTypes';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ArtConsoleProps {
   layoutMode: LayoutMode;
   setLayoutMode: (mode: LayoutMode) => void;
+  targetFrame: string;
+  modules: ModuleState;
+  onChangeModule: (frameId: string, moduleType: ModuleType) => void;
+  command: string;
+  setCommand: (command: string) => void;
+  selectedApi: string;
+  setSelectedApi: (api: string) => void;
+  onCommandSubmit: (command: string) => void;
 }
 
-const ArtConsole = ({ layoutMode, setLayoutMode }: ArtConsoleProps) => {
+const ArtConsole = ({ 
+  layoutMode, 
+  setLayoutMode,
+  targetFrame,
+  modules,
+  onChangeModule,
+  command,
+  setCommand,
+  selectedApi,
+  setSelectedApi,
+  onCommandSubmit
+}: ArtConsoleProps) => {
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
   const [weather, setWeather] = useState({ temp: '21°C', condition: 'Sunny' });
-  const [command, setCommand] = useState('');
-  const [selectedModule, setSelectedModule] = useState('chat');
-  const [selectedApi, setSelectedApi] = useState('openai');
+  const [selectedModule, setSelectedModule] = useState<ModuleType>('chat');
   
   // Update time and date
   useEffect(() => {
@@ -47,9 +64,16 @@ const ArtConsole = ({ layoutMode, setLayoutMode }: ArtConsoleProps) => {
 
   const handleCommandSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(`Command submitted: ${command}`);
-    // Process command
-    setCommand('');
+    if (command.trim()) {
+      onCommandSubmit(command);
+    }
+  };
+
+  const handleModuleChange = (value: string) => {
+    setSelectedModule(value as ModuleType);
+    if (targetFrame) {
+      onChangeModule(targetFrame, value as ModuleType);
+    }
   };
 
   const toggleLayoutMode = () => {
@@ -67,13 +91,18 @@ const ArtConsole = ({ layoutMode, setLayoutMode }: ArtConsoleProps) => {
             <Command size={18} className="text-console-accent" />
           </div>
           <span className="ml-2 text-sm font-semibold text-console-accent">ART</span>
+          {targetFrame && (
+            <span className="ml-2 text-xs text-console-muted">
+              Target: <span className="text-console-accent">{modules[targetFrame].type}</span> in {targetFrame}
+            </span>
+          )}
         </div>
         
         <div className="flex space-x-2">
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-7 w-7 rounded-md bg-console-m-muted hover:bg-console-muted"
+            className="h-7 w-7 rounded-md bg-console-muted hover:bg-console-muted"
             onClick={toggleLayoutMode}
           >
             {layoutMode === 'fullscreen' && <Maximize size={14} />}
@@ -95,21 +124,29 @@ const ArtConsole = ({ layoutMode, setLayoutMode }: ArtConsoleProps) => {
               value={command}
               onChange={(e) => setCommand(e.target.value)}
               className="w-full bg-console-muted border-console-border text-sm pl-8"
-              placeholder="Enter a command..."
+              placeholder={`Enter a command for ${targetFrame ? modules[targetFrame].type : 'ART'}...`}
             />
             <Search size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-console-muted" />
           </div>
         </form>
         
-        <Select value={selectedModule} onValueChange={setSelectedModule}>
+        <Select value={selectedModule} onValueChange={handleModuleChange}>
           <SelectTrigger className="w-[140px] h-9 bg-console-muted border-console-border">
             <SelectValue placeholder="Select module" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="chat"><MessageSquare className="mr-2 h-4 w-4" /> Chat</SelectItem>
             <SelectItem value="email"><MailOpen className="mr-2 h-4 w-4" /> Email</SelectItem>
-            <SelectItem value="calendar"><Calendar className="mr-2 h-4 w-4" /> Calendar</SelectItem>
+            <SelectItem value="agenda"><Calendar className="mr-2 h-4 w-4" /> Agenda</SelectItem>
+            <SelectItem value="todo"><Layers className="mr-2 h-4 w-4" /> Todo</SelectItem>
             <SelectItem value="routeplanner"><Globe className="mr-2 h-4 w-4" /> Route Planner</SelectItem>
+            <SelectItem value="trading">Trading</SelectItem>
+            <SelectItem value="stats">Statistics</SelectItem>
+            <SelectItem value="homeassistant">Home Assistant</SelectItem>
+            <SelectItem value="browser">Browser</SelectItem>
+            <SelectItem value="news">News</SelectItem>
+            <SelectItem value="blockchain">Blockchain</SelectItem>
+            <SelectItem value="scanner">Scanner</SelectItem>
           </SelectContent>
         </Select>
         
@@ -121,6 +158,8 @@ const ArtConsole = ({ layoutMode, setLayoutMode }: ArtConsoleProps) => {
             <SelectItem value="openai">OpenAI</SelectItem>
             <SelectItem value="anthropic">Anthropic</SelectItem>
             <SelectItem value="gemini">Gemini</SelectItem>
+            <SelectItem value="ollama">Ollama</SelectItem>
+            <SelectItem value="perplexity">Perplexity</SelectItem>
           </SelectContent>
         </Select>
         

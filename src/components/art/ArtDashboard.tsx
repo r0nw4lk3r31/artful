@@ -2,16 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import ArtConsole from './ArtConsole';
 import ModuleFrame from './ModuleFrame';
-import { LayoutMode } from '@/types/artTypes';
+import { LayoutMode, ModuleType, ModuleState } from '@/types/artTypes';
+import { useToast } from '@/hooks/use-toast';
 
 const ArtDashboard = () => {
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('split');
-  const [modules, setModules] = useState<Record<string, string>>({
-    frame1: 'chat',
-    frame2: 'agenda',
-    frame3: 'email',
-    frame4: 'routeplanner',
+  const [modules, setModules] = useState<ModuleState>({
+    frame1: { id: 'frame1', type: 'chat', title: 'Chat' },
+    frame2: { id: 'frame2', type: 'agenda', title: 'Agenda' },
+    frame3: { id: 'frame3', type: 'email', title: 'Email' },
+    frame4: { id: 'frame4', type: 'routeplanner', title: 'Route Planner' },
   });
+  const [targetFrame, setTargetFrame] = useState<string>('frame1');
+  const [command, setCommand] = useState<string>('');
+  const [selectedApi, setSelectedApi] = useState<string>('openai');
+  const { toast } = useToast();
 
   const getLayoutClass = () => {
     switch (layoutMode) {
@@ -26,11 +31,50 @@ const ArtDashboard = () => {
     }
   };
 
-  const handleChangeModule = (frameId: string, moduleType: string) => {
+  const handleChangeModule = (frameId: string, moduleType: ModuleType) => {
     setModules(prev => ({
       ...prev,
-      [frameId]: moduleType
+      [frameId]: { 
+        ...prev[frameId],
+        type: moduleType, 
+        title: moduleType.charAt(0).toUpperCase() + moduleType.slice(1)
+      }
     }));
+
+    toast({
+      title: 'Module Changed',
+      description: `${frameId} is now displaying ${moduleType}`,
+    });
+  };
+
+  const handleRemoveModule = (frameId: string) => {
+    const defaultModule: ModuleType = 'chat';
+    
+    setModules(prev => ({
+      ...prev,
+      [frameId]: { 
+        ...prev[frameId],
+        type: defaultModule,
+        title: defaultModule.charAt(0).toUpperCase() + defaultModule.slice(1)
+      }
+    }));
+
+    toast({
+      title: 'Module Reset',
+      description: `${frameId} has been reset to the chat module`,
+    });
+  };
+
+  const handleCommandSubmit = (command: string) => {
+    // Process command and direct it to the targeted module
+    console.log(`Command submitted to ${targetFrame}: ${command}`);
+    setCommand('');
+    
+    // In a real implementation, this would parse the command and dispatch to modules
+    toast({
+      title: 'Command Sent',
+      description: `"${command}" sent to ${modules[targetFrame].type} module`,
+    });
   };
 
   return (
@@ -41,8 +85,11 @@ const ArtDashboard = () => {
         {layoutMode === 'fullscreen' && (
           <ModuleFrame 
             id="frame1" 
-            moduleType={modules.frame1}
+            moduleType={modules.frame1.type}
             onChangeModule={(moduleType) => handleChangeModule('frame1', moduleType)}
+            onRemoveModule={() => handleRemoveModule('frame1')}
+            isTargeted={targetFrame === 'frame1'}
+            setTargetFrame={setTargetFrame}
           />
         )}
         
@@ -50,13 +97,19 @@ const ArtDashboard = () => {
           <>
             <ModuleFrame 
               id="frame1" 
-              moduleType={modules.frame1}
+              moduleType={modules.frame1.type}
               onChangeModule={(moduleType) => handleChangeModule('frame1', moduleType)}
+              onRemoveModule={() => handleRemoveModule('frame1')}
+              isTargeted={targetFrame === 'frame1'}
+              setTargetFrame={setTargetFrame}
             />
             <ModuleFrame 
               id="frame2" 
-              moduleType={modules.frame2}
+              moduleType={modules.frame2.type}
               onChangeModule={(moduleType) => handleChangeModule('frame2', moduleType)}
+              onRemoveModule={() => handleRemoveModule('frame2')}
+              isTargeted={targetFrame === 'frame2'}
+              setTargetFrame={setTargetFrame}
             />
           </>
         )}
@@ -65,23 +118,35 @@ const ArtDashboard = () => {
           <>
             <ModuleFrame 
               id="frame1" 
-              moduleType={modules.frame1}
+              moduleType={modules.frame1.type}
               onChangeModule={(moduleType) => handleChangeModule('frame1', moduleType)}
+              onRemoveModule={() => handleRemoveModule('frame1')}
+              isTargeted={targetFrame === 'frame1'}
+              setTargetFrame={setTargetFrame}
             />
             <ModuleFrame 
               id="frame2" 
-              moduleType={modules.frame2}
+              moduleType={modules.frame2.type}
               onChangeModule={(moduleType) => handleChangeModule('frame2', moduleType)}
+              onRemoveModule={() => handleRemoveModule('frame2')}
+              isTargeted={targetFrame === 'frame2'}
+              setTargetFrame={setTargetFrame}
             />
             <ModuleFrame 
               id="frame3" 
-              moduleType={modules.frame3}
+              moduleType={modules.frame3.type}
               onChangeModule={(moduleType) => handleChangeModule('frame3', moduleType)}
+              onRemoveModule={() => handleRemoveModule('frame3')}
+              isTargeted={targetFrame === 'frame3'}
+              setTargetFrame={setTargetFrame}
             />
             <ModuleFrame 
               id="frame4" 
-              moduleType={modules.frame4}
+              moduleType={modules.frame4.type}
               onChangeModule={(moduleType) => handleChangeModule('frame4', moduleType)}
+              onRemoveModule={() => handleRemoveModule('frame4')}
+              isTargeted={targetFrame === 'frame4'}
+              setTargetFrame={setTargetFrame}
             />
           </>
         )}
@@ -90,6 +155,14 @@ const ArtDashboard = () => {
       <ArtConsole 
         layoutMode={layoutMode} 
         setLayoutMode={setLayoutMode}
+        targetFrame={targetFrame}
+        modules={modules}
+        onChangeModule={handleChangeModule}
+        command={command}
+        setCommand={setCommand}
+        selectedApi={selectedApi}
+        setSelectedApi={setSelectedApi}
+        onCommandSubmit={handleCommandSubmit}
       />
     </div>
   );
