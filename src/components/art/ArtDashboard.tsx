@@ -80,7 +80,8 @@ const ArtDashboard = () => {
   return (
     <div className="flex flex-col h-screen w-full bg-background text-foreground overflow-hidden">
       <div 
-        className={`grid flex-1 gap-4 p-4 ${getLayoutClass()} transition-all duration-300 ease-in-out`}
+        className={`grid flex-1 gap-4 p-4 ${getLayoutClass()} transition-all duration-300 ease-in-out overflow-hidden`}
+        style={{ height: 'calc(100vh - 112px)' }} // Fixed height calculation accounting for console height
       >
         {layoutMode === 'fullscreen' && (
           <ModuleFrame 
@@ -152,18 +153,20 @@ const ArtDashboard = () => {
         )}
       </div>
       
-      <ArtConsole 
-        layoutMode={layoutMode} 
-        setLayoutMode={setLayoutMode}
-        targetFrame={targetFrame}
-        modules={modules}
-        onChangeModule={handleChangeModule}
-        command={command}
-        setCommand={setCommand}
-        selectedApi={selectedApi}
-        setSelectedApi={setSelectedApi}
-        onCommandSubmit={handleCommandSubmit}
-      />
+      <div className="fixed bottom-0 left-0 right-0 z-10">
+        <ArtConsole 
+          layoutMode={layoutMode} 
+          setLayoutMode={setLayoutMode}
+          targetFrame={targetFrame}
+          modules={modules}
+          onChangeModule={handleChangeModule}
+          command={command}
+          setCommand={setCommand}
+          selectedApi={selectedApi}
+          setSelectedApi={setSelectedApi}
+          onCommandSubmit={handleCommandSubmit}
+        />
+      </div>
     </div>
   );
 };
