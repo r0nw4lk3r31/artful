@@ -16,7 +16,26 @@ const ArtDashboard = () => {
   const [targetFrame, setTargetFrame] = useState<string>('frame1');
   const [command, setCommand] = useState<string>('');
   const [selectedApi, setSelectedApi] = useState<string>('openai');
+  const [consoleHeight, setConsoleHeight] = useState<number>(112); // Default console height
   const { toast } = useToast();
+
+  // Calculate available height for frames on component mount and window resize
+  useEffect(() => {
+    const updateDimensions = () => {
+      const consoleDivElement = document.querySelector('.console-wrapper');
+      if (consoleDivElement) {
+        const height = consoleDivElement.clientHeight;
+        setConsoleHeight(height);
+      }
+    };
+
+    // Initial calculation
+    setTimeout(updateDimensions, 100);
+    
+    // Update on resize
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
   const getLayoutClass = () => {
     switch (layoutMode) {
@@ -81,7 +100,7 @@ const ArtDashboard = () => {
     <div className="flex flex-col h-screen w-full bg-background text-foreground overflow-hidden">
       <div 
         className={`grid flex-1 gap-4 p-4 ${getLayoutClass()} transition-all duration-300 ease-in-out overflow-hidden`}
-        style={{ height: 'calc(100vh - 112px)' }} // Fixed height calculation accounting for console height
+        style={{ height: `calc(100vh - ${consoleHeight}px)` }} // Dynamic height calculation based on console height
       >
         {layoutMode === 'fullscreen' && (
           <ModuleFrame 
@@ -153,7 +172,7 @@ const ArtDashboard = () => {
         )}
       </div>
       
-      <div className="fixed bottom-0 left-0 right-0 z-10">
+      <div className="fixed bottom-0 left-0 right-0 z-10 console-wrapper">
         <ArtConsole 
           layoutMode={layoutMode} 
           setLayoutMode={setLayoutMode}
