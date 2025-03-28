@@ -26,41 +26,34 @@ const ChatModule = ({ frameId, isTargeted }: ChatModuleProps) => {
       timestamp: new Date()
     }
   ]);
-  const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
+  // This function will be triggered by the ArtConsole when commands are submitted
+  // and the frame is targeted
+  const processCommand = (command: string) => {
+    if (!command.trim()) return;
 
     const newUserMessage: Message = {
       id: Date.now().toString(),
-      content: inputValue,
+      content: command,
       sender: 'user',
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, newUserMessage]);
-    setInputValue('');
     setIsProcessing(true);
 
     // Simulate assistant response
     setTimeout(() => {
       const responseMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: `I've processed your request: "${inputValue}"`,
+        content: `I've processed your request: "${command}"`,
         sender: 'assistant',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, responseMessage]);
       setIsProcessing(false);
     }, 1000);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
   };
 
   return (
@@ -105,23 +98,15 @@ const ChatModule = ({ frameId, isTargeted }: ChatModuleProps) => {
             </div>
           )}
         </div>
-        <div className="flex items-center space-x-2">
-          <Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            disabled={!isTargeted}
-            className="flex-1"
-          />
-          <Button
-            size="icon"
-            onClick={handleSendMessage}
-            disabled={!inputValue.trim() || !isTargeted}
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
+        
+        {/* The input bar at the bottom has been removed as requested */}
+        {/* The console command bar will be used instead when this frame is targeted */}
+        
+        {!isTargeted && (
+          <div className="py-3 text-center text-sm text-muted-foreground border border-dashed rounded-md">
+            Click to target this chat frame and use the console command bar below
+          </div>
+        )}
       </div>
     </BaseModule>
   );
