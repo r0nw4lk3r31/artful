@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Command, Divide, Globe, Layers, LayoutGrid, MailOpen, Maximize, Menu, MessageSquare, Search, Settings, Sun, Thermometer, Watch, X } from 'lucide-react';
+import { Calendar, Command, Divide, Globe, Layers, LayoutGrid, MailOpen, Maximize, Menu, MessageSquare, Search, Settings, Sun, Thermometer, Watch, X, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LayoutMode, ModuleState, ModuleType } from '@/types/artTypes';
@@ -140,6 +140,7 @@ const ArtConsole = ({
             <SelectItem value="agenda"><Calendar className="mr-2 h-4 w-4" /> Agenda</SelectItem>
             <SelectItem value="todo"><Layers className="mr-2 h-4 w-4" /> Todo</SelectItem>
             <SelectItem value="routeplanner"><Globe className="mr-2 h-4 w-4" /> Route Planner</SelectItem>
+            <SelectItem value="coding"><Code className="mr-2 h-4 w-4" /> Coding</SelectItem>
             <SelectItem value="trading">Trading</SelectItem>
             <SelectItem value="stats">Statistics</SelectItem>
             <SelectItem value="homeassistant">Home Assistant</SelectItem>

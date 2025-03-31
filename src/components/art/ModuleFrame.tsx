@@ -14,6 +14,7 @@ import BrowserModule from './modules/BrowserModule';
 import NewsModule from './modules/NewsModule';
 import BlockchainModule from './modules/BlockchainModule';
 import ScannerModule from './modules/ScannerModule';
+import CodingModule from './modules/CodingModule';
 import { useToast } from '@/hooks/use-toast';
 
 interface ModuleFrameProps {
@@ -65,6 +66,8 @@ const ModuleFrame = ({
         return <BlockchainModule frameId={id} isTargeted={isTargeted} />;
       case 'scanner':
         return <ScannerModule frameId={id} isTargeted={isTargeted} />;
+      case 'coding':
+        return <CodingModule frameId={id} isTargeted={isTargeted} />;
       default:
         return <div className="text-muted-foreground text-sm">Unknown module type</div>;
     }

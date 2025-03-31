@@ -13,7 +13,8 @@ export type ModuleType =
   | 'browser'
   | 'news'
   | 'blockchain'
-  | 'scanner';
+  | 'scanner'
+  | 'coding';
 
 export interface Module {
   id: string;

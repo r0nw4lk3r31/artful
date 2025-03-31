@@ -28,6 +28,11 @@ const ChatModule = ({ frameId, isTargeted }: ChatModuleProps) => {
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Store messages in localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
+  }, [messages]);
+
   // This function will be triggered by the ArtConsole when commands are submitted
   // and the frame is targeted
   const processCommand = (command: string) => {
